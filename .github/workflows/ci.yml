@@ -1,0 +1,44 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e . pytest
+      - run: pytest -q
+
+  examples:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: The fixed example passes lint and its cases
+        working-directory: examples/fixed
+        run: |
+          hookverdict lint --no-user --strict
+          hookverdict test hookverdict-cases.json --no-user --timeout 30
+      - name: The broken example fails its cases
+        working-directory: examples/broken
+        run: |
+          set +e
+          hookverdict test hookverdict-cases.json --no-user --timeout 30
+          code=$?
+          set -e
+          test "$code" = 1
+      - name: The README trace for the broken rm hook
+        working-directory: examples/broken
+        run: hookverdict run PreToolUse --command "rm -rf build" --no-user | grep -F "exit 1 does NOT block"

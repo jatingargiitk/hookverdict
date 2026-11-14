@@ -137,7 +137,7 @@ def _describe(res: Result, project: str, out) -> None:
     if v.updated_input is not None:
         print(f"  updatedInput: {json.dumps(v.updated_input)}", file=out)
     for c in v.additional_context:
-        print(f"  additionalContext: {c}", file=out)
+        print(f"  context for Claude: {c}", file=out)
     for m in v.system_messages:
         print(f"  systemMessage: {m}", file=out)
 
