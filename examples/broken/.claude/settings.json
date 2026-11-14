@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "if": "Bash(rm *)", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/no-rm.sh" },
+          { "type": "command", "command": "python3 ${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-push.py" }
+        ]
+      },
+      {
+        "matcher": "mcp__github",
+        "hooks": [
+          { "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/no-rm.sh" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "deploy",
+        "hooks": [
+          { "type": "command", "command": "echo 'Deploys go through the release checklist in RELEASING.md.'" }
+        ]
+      }
+    ]
+  }
+}

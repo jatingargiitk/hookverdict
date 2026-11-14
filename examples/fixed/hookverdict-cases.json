@@ -1,0 +1,12 @@
+{
+  "cases": [
+    { "name": "rm -rf is blocked", "event": "PreToolUse", "tool": "Bash",
+      "input": { "command": "rm -rf build" }, "expect": { "verdict": "deny", "reason_contains": "no rm -rf" } },
+    { "name": "rm -rf inside $() is blocked", "event": "PreToolUse", "tool": "Bash",
+      "input": { "command": "echo $(rm -rf /tmp/x)" }, "expect": "deny" },
+    { "name": "git push asks first", "event": "PreToolUse", "tool": "Bash",
+      "input": { "command": "npm test && git push origin main" }, "expect": "ask" },
+    { "name": "ls is left alone", "event": "PreToolUse", "tool": "Bash",
+      "input": { "command": "ls -la" }, "expect": { "verdict": "none", "no_errors": true } }
+  ]
+}
